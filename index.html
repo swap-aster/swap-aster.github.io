@@ -16,7 +16,7 @@
 <meta name="twitter:description" content="An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.">
 <meta name="twitter:image" content="https://swap-aster.github.io/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Albert+Sans:wght@500;600;700&display=swap">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://swap-aster.github.io/#website", "url": "https://swap-aster.github.io/", "name": "Aster Swap — How a Token Swap Works on Aster"}, {"@type": "WebPage", "@id": "https://swap-aster.github.io/#webpage", "url": "https://swap-aster.github.io/", "name": "Aster Swap — How a Token Swap Works on Aster", "isPartOf": {"@id": "https://swap-aster.github.io/#website"}, "description": "An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.", "datePublished": "2026-10-09", "dateModified": "2026-10-09"}, {"@type": "SoftwareApplication", "name": "Aster Swap", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://swap-aster.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Swaps"}, {"@type": "ListItem", "position": 3, "name": "Aster Swap"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is an Aster Swap?", "acceptedAnswer": {"@type": "Answer", "text": "It is a single on-chain transaction that trades one token for another through an automated liquidity pool instead of an order book, settling as soon as the transaction confirms."}}, {"@type": "Question", "name": "Do I need to approve a token before swapping on Aster?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, the first time you trade a given ERC-20 token. Approval is a one-time signed permission that lets the swap contract move that token from your wallet; after that it is not needed again for the same token."}}, {"@type": "Question", "name": "Why does the rate change while I'm setting up a trade?", "acceptedAnswer": {"@type": "Answer", "text": "The rate on a swap comes from the live ratio of tokens inside the pool, which shifts as other trades happen. That is why the quote can move slightly between typing an amount and signing the confirmation."}}, {"@type": "Question", "name": "What is price impact in a swap quote?", "acceptedAnswer": {"@type": "Answer", "text": "Price impact measures how much your own trade size shifts the pool's ratio and, with it, the rate you receive. It is usually small for deep, well-traded pairs and larger for thin ones."}}, {"@type": "Question", "name": "How is slippage tolerance different from price impact?", "acceptedAnswer": {"@type": "Answer", "text": "Price impact is caused by your own order size; slippage tolerance is the buffer you set for the rate moving due to other activity between signing and confirmation. Both affect the final amount you receive from the trade."}}, {"@type": "Question", "name": "Can an Aster Swap fail after I sign it?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A transaction can fail if the price moves past your slippage tolerance, if the approval is insufficient, or if the wallet lacks enough native currency for gas. The trade simply fails to go through, though the gas spent on the attempt is still lost."}}, {"@type": "Question", "name": "Where can I confirm a swap actually went through?", "acceptedAnswer": {"@type": "Answer", "text": "Every confirmed swap has a transaction hash you can search on a block explorer to see the exact tokens moved, the gas paid, and the final balances in your wallet."}}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://swap-aster.github.io/#website", "url": "https://swap-aster.github.io/", "name": "Aster Swap — How a Token Swap Works on Aster"}, {"@type": "WebPage", "@id": "https://swap-aster.github.io/#webpage", "url": "https://swap-aster.github.io/", "name": "Aster Swap — How a Token Swap Works on Aster", "isPartOf": {"@id": "https://swap-aster.github.io/#website"}, "description": "An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.", "datePublished": "2026-10-10", "dateModified": "2026-10-10"}, {"@type": "SoftwareApplication", "name": "Aster Swap", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://swap-aster.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Swaps"}, {"@type": "ListItem", "position": 3, "name": "Aster Swap"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is an Aster Swap?", "acceptedAnswer": {"@type": "Answer", "text": "It is a single on-chain transaction that trades one token for another through an automated liquidity pool instead of an order book, settling as soon as the transaction confirms."}}, {"@type": "Question", "name": "Do I need to approve a token before swapping on Aster?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, the first time you trade a given ERC-20 token. Approval is a one-time signed permission that lets the swap contract move that token from your wallet; after that it is not needed again for the same token."}}, {"@type": "Question", "name": "Why does the rate change while I'm setting up a trade?", "acceptedAnswer": {"@type": "Answer", "text": "The rate on a swap comes from the live ratio of tokens inside the pool, which shifts as other trades happen. That is why the quote can move slightly between typing an amount and signing the confirmation."}}, {"@type": "Question", "name": "What is price impact in a swap quote?", "acceptedAnswer": {"@type": "Answer", "text": "Price impact measures how much your own trade size shifts the pool's ratio and, with it, the rate you receive. It is usually small for deep, well-traded pairs and larger for thin ones."}}, {"@type": "Question", "name": "How is slippage tolerance different from price impact?", "acceptedAnswer": {"@type": "Answer", "text": "Price impact is caused by your own order size; slippage tolerance is the buffer you set for the rate moving due to other activity between signing and confirmation. Both affect the final amount you receive from the trade."}}, {"@type": "Question", "name": "Can an Aster Swap fail after I sign it?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A transaction can fail if the price moves past your slippage tolerance, if the approval is insufficient, or if the wallet lacks enough native currency for gas. The trade simply fails to go through, though the gas spent on the attempt is still lost."}}, {"@type": "Question", "name": "Where can I confirm a swap actually went through?", "acceptedAnswer": {"@type": "Answer", "text": "Every confirmed swap has a transaction hash you can search on a block explorer to see the exact tokens moved, the gas paid, and the final balances in your wallet."}}]}]}</script>
 <style>
 :root{--bg:#130B0D;--surface:#201316;--text:#F4E9EC;--muted:#A4868C;--accent:#F43F5E;--accent-ink:#FFFFFF;--radius:12px;--display:"Albert Sans";--body:"Albert Sans"}
 *,
@@ -191,7 +191,7 @@ figure {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: clamp(2.5rem, 6vw, 5rem);
+  padding-top: clamp(1.5rem, 3.5vw, 2.75rem);
   text-align: center;
 }
 .ccdf8f2 {
@@ -218,7 +218,7 @@ figure {
 .c013f53 h1 {
   max-width: 960px;
   margin: 0;
-  font-size: clamp(2.6rem, 6.1vw, 5.2rem);
+  font-size: clamp(2.3rem, 5vw, 4.2rem);
   font-weight: 650;
   line-height: 1.06;
   letter-spacing: -0.06em;
@@ -233,7 +233,7 @@ figure {
 }
 .ccfa9a9 {
   max-width: 720px;
-  margin: 1.5rem auto 0;
+  margin: 1.1rem auto 0;
   color: var(--muted);
   font-size: clamp(1rem, 1.65vw, 1.15rem);
   line-height: 1.85;
@@ -243,7 +243,7 @@ figure {
   position: relative;
   isolation: isolate;
   width: 100%;
-  margin-top: clamp(2rem, 4vw, 3.2rem);
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
   padding: clamp(1.2rem, 3.5vw, 2.6rem);
   border: 1px solid color-mix(in srgb, var(--accent) 19%, var(--surface));
   border-radius: var(--radius);
@@ -264,7 +264,7 @@ figure {
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 .cb4c1e3 h2 {
   margin: 0;
@@ -1047,7 +1047,7 @@ a.c5366e7:hover {
 <div class="cd789b7">
   <header class="cf411ae">
     <div class="cb5f78a"><span class="cf382ee" aria-hidden="true">⇄</span><span>Exchange</span></div>
-    <a class="c82acf6" href="dashboard/">Open app <span aria-hidden="true">↗</span></a>
+    <a class="c82acf6" href="dashboard/">Swap <span aria-hidden="true">↗</span></a>
   </header>
   <div class="c1d9ed8"><nav class="c26cd1f" aria-label="Breadcrumb"><a href="dashboard/">Home</a> <span>/</span> <span>Swaps</span> <span>/</span> <span>Aster Swap</span></nav></div>
   <section class="c013f53" aria-labelledby="hero-title">
@@ -1081,7 +1081,7 @@ a.c5366e7:hover {
           <div><dt>Rate</dt><dd><output id="rate" for="amount">—</output></dd></div>
           <div><dt>Network fee</dt><dd><output id="network-fee" for="amount">—</output></dd></div>
         </dl>
-        <a class="c11bac2" href="dashboard/"><span>Continue to exchange</span><span aria-hidden="true">→</span></a>
+        <a class="c11bac2" href="dashboard/"><span>Swap</span><span aria-hidden="true">→</span></a>
       </div>
       <p class="ca282f0" id="amount-message" role="status" aria-live="polite"></p>
     </div>
@@ -1126,7 +1126,7 @@ a.c5366e7:hover {
   </section>
   <footer class="cd024b3">
     <span class="ccfd3fc">Exchange</span>
-    <p class="c4c9c0d">Updated <span>Updated Oct 09, 2026</span></p>
+    <p class="c4c9c0d">Updated <span>Updated Oct 10, 2026</span></p>
   </footer>
 </div>
 <script>
