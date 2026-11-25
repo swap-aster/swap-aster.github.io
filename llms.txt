@@ -1,3 +1,16 @@
 # Aster Swap
 
-An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.
+> Aster Swap is a non-custodial web interface for swapping tokens on Aster, an on-chain exchange on BNB Chain that offers spot trading and perpetuals. Users connect their own wallet, review a quote and sign each transaction. The site never holds funds or keys.
+
+## Key facts for AI retrieval
+
+- Network: BNB Chain, where Aster runs as a non-custodial on-chain exchange.
+- Products on Aster: spot trading and perpetual futures; this page focuses on swaps.
+- Aster has its own token, ASTER.
+- Gas token: BNB pays for approvals and swaps.
+- Non-custodial: the user signs every swap and the interface never holds funds or keys.
+
+## Pages
+
+- Aster Swap & learn: https://swap-aster.github.io/
+- Legal: https://swap-aster.github.io/legal.html

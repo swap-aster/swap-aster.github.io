@@ -1,306 +1,250 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aster Swap — How a Token Swap Works on Aster</title>
-  <meta name="description" content="An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.">
-  <link rel="canonical" href="https://swap-aster.github.io/">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Aster Swap">
-  <meta property="og:description" content="An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.">
-  <meta property="og:url" content="https://swap-aster.github.io/">
-  <meta property="og:image" content="https://swap-aster.github.io/og.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Aster Swap">
-  <meta name="twitter:description" content="An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.">
-  <meta name="twitter:image" content="https://swap-aster.github.io/og.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Albert+Sans:wght@500;600;700&display=swap">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://swap-aster.github.io/#website", "url": "https://swap-aster.github.io/", "name": "Aster Swap — How a Token Swap Works on Aster"}, {"@type": "WebPage", "@id": "https://swap-aster.github.io/#webpage", "url": "https://swap-aster.github.io/", "name": "Aster Swap — How a Token Swap Works on Aster", "isPartOf": {"@id": "https://swap-aster.github.io/#website"}, "description": "An Aster Swap trades one token for another in a single on-chain transaction. See how to connect, pick a pair, approve a token, read the quote, and confirm the trade.", "datePublished": "2026-11-06", "dateModified": "2026-11-06"}, {"@type": "SoftwareApplication", "name": "Aster Swap", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://swap-aster.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Swaps"}, {"@type": "ListItem", "position": 3, "name": "Aster Swap"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is an Aster Swap?", "acceptedAnswer": {"@type": "Answer", "text": "It is a single on-chain transaction that trades one token for another through an automated liquidity pool instead of an order book, settling as soon as the transaction confirms."}}, {"@type": "Question", "name": "Do I need to approve a token before swapping on Aster?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, the first time you trade a given ERC-20 token. Approval is a one-time signed permission that lets the swap contract move that token from your wallet; after that it is not needed again for the same token."}}, {"@type": "Question", "name": "Why does the rate change while I'm setting up a trade?", "acceptedAnswer": {"@type": "Answer", "text": "The rate on a swap comes from the live ratio of tokens inside the pool, which shifts as other trades happen. That is why the quote can move slightly between typing an amount and signing the confirmation."}}, {"@type": "Question", "name": "What is price impact in a swap quote?", "acceptedAnswer": {"@type": "Answer", "text": "Price impact measures how much your own trade size shifts the pool's ratio and, with it, the rate you receive. It is usually small for deep, well-traded pairs and larger for thin ones."}}, {"@type": "Question", "name": "How is slippage tolerance different from price impact?", "acceptedAnswer": {"@type": "Answer", "text": "Price impact is caused by your own order size; slippage tolerance is the buffer you set for the rate moving due to other activity between signing and confirmation. Both affect the final amount you receive from the trade."}}, {"@type": "Question", "name": "Can an Aster Swap fail after I sign it?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A transaction can fail if the price moves past your slippage tolerance, if the approval is insufficient, or if the wallet lacks enough native currency for gas. The trade simply fails to go through, though the gas spent on the attempt is still lost."}}, {"@type": "Question", "name": "Where can I confirm a swap actually went through?", "acceptedAnswer": {"@type": "Answer", "text": "Every confirmed swap has a transaction hash you can search on a block explorer to see the exact tokens moved, the gas paid, and the final balances in your wallet."}}]}]}</script>
-  <style>
-    :root{--bg:#130B0D;--surface:#201316;--text:#F4E9EC;--muted:#A4868C;--accent:#F43F5E;--accent-ink:#FFFFFF;--radius:12px;--display:"Albert Sans";--body:"Albert Sans"}
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
-    body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.7 var(--body); -webkit-font-smoothing: antialiased; }
-    a { color: var(--accent); text-underline-offset: .22em; }
-    a:hover { text-decoration-thickness: .12em; }
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
-    ::selection { background: var(--accent); color: var(--accent-ink); }
-    h1, h2, h3, h4, h5, h6 { font-family: var(--display); line-height: 1.15; text-wrap: balance; }
-    p, h1, h2, h3 { margin-top: 0; }
-    img, svg { max-width: 100%; vertical-align: middle; }
-    .cd789b7 { width: min(1180px, calc(100% - 3rem)); margin-inline: auto; }
-    .c5cab37 { position: absolute; z-index: 5; top: .5rem; left: 1rem; padding: .7rem 1rem; background: var(--surface); transform: translateY(-180%); border-radius: var(--radius); }
-    .c5cab37:focus { transform: translateY(0); }
-    .c64431c { border-bottom: 1px solid color-mix(in srgb,var(--text) 10%,transparent); }
-    .cf01d37 { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-    .ca6e3f4 { display: inline-flex; align-items: center; gap: .7rem; color: var(--text); font: 650 1.12rem/1.2 var(--display); text-decoration: none; }
-    .c055988 { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: calc(var(--radius) * .6); background: var(--accent); color: var(--accent-ink); }
-    .c7ede64 { width: 1.2rem; height: 1.2rem; fill: none; stroke: var(--accent-ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
-    .cb8be88 { display: flex; align-items: center; gap: 1.8rem; }
-    .cb8be88 > a { font-size: .88rem; font-weight: 600; text-decoration: none; }
-    .cb8be88 > a:not(.cedccae) { color: var(--muted); }
-    .cedccae { display: inline-flex; align-items: center; justify-content: center; gap: .8rem; min-height: 52px; padding: .85rem 1.4rem; border: 1px solid color-mix(in srgb,var(--accent-ink) 12%,transparent); border-radius: var(--radius); background: linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 88%,var(--text))); color: var(--accent-ink); font: 650 .95rem/1.3 var(--body); text-decoration: none; box-shadow: 0 6px 18px color-mix(in srgb,var(--accent) 17%,transparent); transition: transform .18s ease, box-shadow .18s ease; }
-    .cedccae:hover { transform: translateY(-2px); box-shadow: 0 9px 24px color-mix(in srgb,var(--accent) 25%,transparent); }
-    .cf01d37 .cedccae { min-height: 42px; padding: .65rem 1rem; }
-    .ceadd03 { padding-block: 1rem 0; color: var(--muted); font-size: .8rem; overflow-wrap: anywhere; }
-    .c26cd1f { color: var(--muted); }
-    .c26cd1f a, a.c26cd1f { color: var(--muted); text-decoration: none; }
-    .c26cd1f a:hover, a.c26cd1f:hover { color: var(--accent); text-decoration: underline; }
-    .c26cd1f ol, .c26cd1f ul { display: flex; flex-wrap: wrap; gap: .5rem 1rem; padding: 0; margin: 0; list-style: none; }
-    .c013f53 { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr); gap: clamp(2rem,5vw,4.5rem); align-items: start; padding-block: 1.5rem 3rem; }
-    .ccdf8f2 { display: inline-flex; align-items: center; gap: .55rem; margin-bottom: 1.3rem; color: var(--accent); font-size: .86rem; font-weight: 600; }
-    .ccdf8f2::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb,var(--accent) 9%,transparent); }
-    h1 { margin-bottom: 1.4rem; font-size: clamp(2.5rem,4.7vw,4.35rem); font-weight: 600; letter-spacing: -.055em; overflow-wrap: anywhere; }
-    h1 em { color: var(--accent); font-style: normal; }
-    .c8fa205 { max-width: 48ch; margin-bottom: 2rem; color: var(--muted); font-size: 1.08rem; line-height: 1.8; }
-    .ca0e2b4 { position: relative; min-width: 0; padding: clamp(1.1rem,2.4vw,1.5rem); border: 1px solid color-mix(in srgb,var(--accent) 20%,var(--surface)); border-radius: calc(var(--radius) * 1.6); background: linear-gradient(155deg,color-mix(in srgb,var(--accent) 7%,var(--surface)),var(--surface) 40%); box-shadow: 0 24px 64px color-mix(in srgb,var(--text) 9%,transparent),0 4px 12px color-mix(in srgb,var(--accent) 6%,transparent); }
-    .c84d803 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .7rem; margin-bottom: 1rem; }
-    .c84d803 h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.035em; }
-    .cf3ac52 { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .65rem; border: 1px solid color-mix(in srgb,var(--accent) 16%,transparent); border-radius: 999px; background: color-mix(in srgb,var(--accent) 8%,var(--surface)); color: var(--accent); font-size: .72rem; font-weight: 600; }
-    .cf3ac52::before { content: ""; width: .35rem; height: .35rem; border-radius: 50%; background: var(--accent); }
-    .route { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: .8rem; padding: .8rem; margin-bottom: 1rem; border: 1px solid color-mix(in srgb,var(--text) 9%,transparent); border-radius: var(--radius); background: var(--surface); }
-    .endpoint { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: .45rem; }
-    .endpoint:last-child { align-items: flex-end; }
-    .endpoint-label, .ccf17d1 { color: var(--muted); font-size: .78rem; font-weight: 500; }
-    .logo { display: flex; align-items: center; min-height: 36px; max-width: 100%; overflow-wrap: anywhere; font: 600 1rem/1.3 var(--display); }
-    .logo img, .logo svg { max-height: 36px; width: auto; max-width: 100%; object-fit: contain; }
-    .route-arrow { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: color-mix(in srgb,var(--accent) 9%,var(--surface)); }
-    .route-arrow .c7ede64 { stroke: var(--accent); }
-    .ccf17d1 { display: block; margin-bottom: .5rem; color: var(--text); }
-    .amount-field { display: flex; align-items: center; gap: .75rem; padding: .8rem 1rem; border: 1px solid color-mix(in srgb,var(--text) 18%,transparent); border-radius: var(--radius); background: var(--bg); transition: border-color .18s ease; }
-    .amount-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent); }
-    .amount-field input { width: 100%; min-width: 0; padding: .2rem 0; border: 0; background: var(--bg); color: var(--text); font: 550 1.6rem/1.2 var(--display); font-variant-numeric: tabular-nums; }
-    .amount-field input:focus { outline: 0; }
-    .unit { color: var(--muted); font-size: .8rem; }
-    .c536031 { margin: .45rem 0 .85rem; color: var(--muted); font-size: .74rem; }
-    .field-error { margin: .5rem 0; color: var(--text); font-size: .8rem; font-weight: 600; }
-    [hidden] { display: none !important; }
-    .estimate { padding: 1rem; border-radius: var(--radius); background: linear-gradient(120deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),color-mix(in srgb,var(--accent) 4%,var(--surface))); }
-    .estimate-label { margin-bottom: .25rem; color: var(--muted); font-size: .8rem; }
-    .estimate-value { display: block; color: var(--text); font: 600 clamp(1.7rem,3vw,2.5rem)/1.3 var(--display); letter-spacing: -.04em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .estimate-value small { color: var(--muted); font: 400 .8rem/1.4 var(--body); letter-spacing: 0; }
-    .estimate dl { display: grid; gap: .5rem; margin: .8rem 0 0; padding-top: .8rem; border-top: 1px solid color-mix(in srgb,var(--accent) 15%,transparent); font-size: .8rem; }
-    .estimate dl div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem 1rem; }
-    .estimate dt { color: var(--muted); }
-    .estimate dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
-    .method { margin-block: .7rem; color: var(--muted); font-size: .75rem; }
-    .method summary { width: fit-content; color: var(--text); cursor: pointer; }
-    .method p { margin: .65rem 0 0; }
-    .ca0e2b4 > .cedccae { width: 100%; }
-    .c360bdf { padding: .8rem 1rem; border: 1px solid color-mix(in srgb,var(--text) 10%,transparent); border-radius: var(--radius); background: var(--surface); }
-    .ccfadca { margin-bottom: .45rem; }
-    .c173e3b { display: flex; align-items: center; gap: .75rem; }
-    .c452956 { flex: 1; min-width: 0; padding: 0; border: 0; background: transparent; color: var(--text); font: 550 1.55rem/1.2 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .c452956:focus { outline: 0; }
-    .c1135d8 { position: relative; display: inline-flex; align-items: center; gap: .5rem; flex: none; padding: .4rem 1.5rem .4rem .5rem; border: 1px solid color-mix(in srgb,var(--text) 13%,transparent); border-radius: 999px; background: var(--bg); }
-    .c1d5c38 { width: 22px; height: 22px; border-radius: 50%; object-fit: contain; flex: none; }
-    .cb39ca0 { border: 0; background: transparent; color: var(--text); font: 600 .95rem/1 var(--body); cursor: pointer; appearance: none; -webkit-appearance: none; }
-    .cb39ca0:focus { outline: 0; }
-    .c1135d8::after { content: ""; position: absolute; right: .7rem; width: .42rem; height: .42rem; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-2px) rotate(45deg); pointer-events: none; }
-    .c63905e { margin-top: .4rem; color: var(--muted); font-size: .78rem; font-variant-numeric: tabular-nums; }
-    .cee0aa3 { position: relative; z-index: 1; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; margin: -.55rem auto; padding: 0; border: 3px solid var(--surface); border-radius: 50%; background: color-mix(in srgb,var(--accent) 13%,var(--surface)); color: var(--accent); cursor: pointer; transition: transform .2s ease, background .2s ease; }
-    .cee0aa3 svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .cee0aa3:hover { transform: rotate(180deg); background: color-mix(in srgb,var(--accent) 20%,var(--surface)); }
-    .ccf30c9 { display: grid; gap: .5rem; margin: 1rem 0 0; padding-top: .9rem; border-top: 1px solid color-mix(in srgb,var(--accent) 15%,transparent); font-size: .82rem; }
-    .ccf30c9 div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; }
-    .ccf30c9 dt { color: var(--muted); }
-    .ccf30c9 dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
-    .c5c67eb > .cedccae { width: 100%; margin-top: 1.05rem; }
-    .c178f93 { padding: 2rem; border: 1px solid color-mix(in srgb,var(--text) 10%,transparent); border-radius: calc(var(--radius) * 1.3); background: var(--surface); }
-    .c24527b { margin-bottom: 1.3rem; font-size: 1.65rem; font-weight: 550; letter-spacing: -.035em; }
-    .c0344b4 { max-width: 100%; overflow-x: auto; }
-    .caf9c9a { width: 100%; border-collapse: collapse; text-align: left; font-size: .92rem; }
-    .caf9c9a caption { padding-bottom: 1rem; text-align: left; color: var(--muted); }
-    .caf9c9a th, .caf9c9a td { padding: 1rem 1.1rem; border-bottom: 1px solid color-mix(in srgb,var(--text) 9%,transparent); vertical-align: top; overflow-wrap: anywhere; }
-    .caf9c9a th { color: var(--muted); font-weight: 500; }
-    .caf9c9a thead { background: color-mix(in srgb,var(--accent) 5%,var(--surface)); }
-    .caf9c9a tbody tr:last-child > * { border-bottom: 0; }
-    .c5b6d7a { max-width: 820px; padding-block: 4rem 2rem; }
-    .c08fe01 { margin-bottom: 3.3rem; }
-    .c2b9534 { margin: 0 0 1.1rem; font: 550 clamp(1.6rem,3vw,2.2rem)/1.2 var(--display); letter-spacing: -.035em; }
-    .c52a98a { color: var(--muted); line-height: 1.85; overflow-wrap: anywhere; }
-    .c52a98a p { margin-bottom: 1.2rem; }
-    .c52a98a strong, .c52a98a h3, .c52a98a h4 { color: var(--text); }
-    .c52a98a ul, .c52a98a ol { padding-left: 1.3rem; }
-    .c52a98a li { padding-left: .3rem; margin-block: .55rem; }
-    .c52a98a li::marker { color: var(--accent); }
-    .c52a98a blockquote { margin: 1.5rem 0; padding: 1rem 1.4rem; border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; background: var(--surface); color: var(--text); }
-    .c52a98a img { height: auto; border-radius: var(--radius); }
-    .c52a98a pre { overflow-x: auto; padding: 1rem; border-radius: var(--radius); background: var(--surface); }
-    .c52a98a code, .c52a98a pre { font-family: var(--body); }
-    .c08fdd3 { margin-block: .8rem; border: 1px solid color-mix(in srgb,var(--text) 11%,transparent); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
-    .cd853d0 { position: relative; padding: 1.3rem 3.5rem 1.3rem 1.4rem; list-style: none; cursor: pointer; color: var(--text); font: 550 1.04rem/1.5 var(--display); }
-    .cd853d0::-webkit-details-marker { display: none; }
-    .cd853d0::after { content: "+"; position: absolute; right: 1.4rem; top: 1.2rem; color: var(--accent); font-size: 1.3rem; }
-    details[open] > .cd853d0::after { content: "−"; }
-    .c08fdd3[open] { border-color: color-mix(in srgb,var(--accent) 35%,var(--surface)); }
-    .cd853d0:focus-visible { outline-offset: -5px; }
-    .cd72ecd { padding: 0 1.4rem 1.4rem; color: var(--muted); overflow-wrap: anywhere; }
-    .cd72ecd > :last-child { margin-bottom: 0; }
-    .c9681f3 { max-width: 820px; padding-block: 1.5rem 3.5rem; border-top: 1px solid color-mix(in srgb,var(--text) 12%,transparent); }
-    .c9681f3 .c24527b { font-size: 1.25rem; }
-    .c8574fc { margin: 0; padding-left: 1.25rem; color: var(--muted); font-size: .88rem; }
-    .c5366e7 { padding-block: .4rem; padding-left: .25rem; overflow-wrap: anywhere; }
-    .c5366e7 a, a.c5366e7 { color: var(--text); text-decoration-color: color-mix(in srgb,var(--accent) 45%,transparent); }
-    .c5366e7 a:hover, a.c5366e7:hover { color: var(--accent); }
-    .ce3f7e8 { border-top: 1px solid color-mix(in srgb,var(--text) 10%,transparent); }
-    .cae802e { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; min-height: 96px; padding-block: 1.5rem; color: var(--muted); font-size: .8rem; }
-    .cae802e p { margin: 0; }
-    .cae802e a { color: var(--muted); }
-    @media (max-width: 850px) { .c013f53 { grid-template-columns: minmax(0,1fr); gap: 2.5rem; padding-block: 2.5rem 3.5rem; } .cd42e99 { max-width: 650px; } .ca0e2b4 { width: 100%; max-width: 600px; justify-self: center; } h1 { font-size: clamp(2.5rem,7vw,4rem); } .c8fa205 { max-width: 60ch; } }
-    @media (max-width: 540px) { .cd789b7 { width: calc(100% - 2rem); } .cf01d37 { min-height: 76px; gap: .7rem; } .ca6e3f4 { font-size: .95rem; gap: .45rem; } .c055988 { width: 2rem; height: 2rem; } .cb8be88 { gap: .6rem; } .cb8be88 > a:not(.cedccae) { display: none; } .cf01d37 .cedccae { padding-inline: .85rem; font-size: .8rem; } .c178f93 { padding: 1.25rem; } .caf9c9a th, .caf9c9a td { padding: .8rem .55rem; } .cd42e99 > .cedccae { width: 100%; } .c5b6d7a { padding-top: 2.8rem; } .cae802e { align-items: flex-start; flex-direction: column; } }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .cedccae, .amount-field { transition: none; } .cedccae:hover { transform: none; } }
-  </style>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aster Swap — Swap Tokens on Aster, BNB Chain</title>
+<meta name="description" content="Aster Swap helps you swap tokens on Aster, a non-custodial on-chain exchange on BNB Chain with spot and perpetuals. Use your own wallet, no account needed.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#f6f5f4">
+<link rel="canonical" href="https://swap-aster.github.io/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Aster Swap"><meta property="og:title" content="Aster Swap — Swap Tokens on Aster, BNB Chain"><meta property="og:description" content="Aster Swap helps you swap tokens on Aster, a non-custodial on-chain exchange on BNB Chain with spot and perpetuals. Use your own wallet, no account needed."><meta property="og:url" content="https://swap-aster.github.io/"><meta property="og:image" content="https://swap-aster.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Aster Swap — Swap Tokens on Aster, BNB Chain"><meta name="twitter:description" content="Aster Swap helps you swap tokens on Aster, a non-custodial on-chain exchange on BNB Chain with spot and perpetuals. Use your own wallet, no account needed."><meta name="twitter:image" content="https://swap-aster.github.io/og-image.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://swap-aster.github.io/#organization","name":"Aster Swap","url":"https://swap-aster.github.io/","description":"Aster Swap helps you swap tokens on Aster, a non-custodial on-chain exchange on BNB Chain with spot and perpetuals. Use your own wallet, no account needed.","logo":{"@type":"ImageObject","@id":"https://swap-aster.github.io/#logo","url":"https://swap-aster.github.io/icon.svg","caption":"Aster Swap"}},{"@type":"WebSite","@id":"https://swap-aster.github.io/#website","url":"https://swap-aster.github.io/","publisher":{"@id":"https://swap-aster.github.io/#organization"},"name":"Aster Swap"},{"@type":"WebPage","@id":"https://swap-aster.github.io/#webpage","url":"https://swap-aster.github.io/","publisher":{"@id":"https://swap-aster.github.io/#organization"},"name":"Aster Swap — Swap Tokens on Aster, BNB Chain","isPartOf":{"@id":"https://swap-aster.github.io/#website"},"mainEntity":{"@id":"https://swap-aster.github.io/#app"},"breadcrumb":{"@id":"https://swap-aster.github.io/#breadcrumb"}},{"@type":"BreadcrumbList","@id":"https://swap-aster.github.io/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://swap-aster.github.io/"},{"@type":"ListItem","position":2,"name":"Aster Swap","item":"https://swap-aster.github.io/"}]},{"@type":"WebApplication","@id":"https://swap-aster.github.io/#app","url":"https://swap-aster.github.io/","publisher":{"@id":"https://swap-aster.github.io/#organization"},"name":"Aster Swap","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Aster Swap helps you swap tokens on Aster, a non-custodial on-chain exchange on BNB Chain with spot and perpetuals. Use your own wallet, no account needed.","isPartOf":{"@id":"https://swap-aster.github.io/#website"}},{"@type":"FAQPage","@id":"https://swap-aster.github.io/#faq","isPartOf":{"@id":"https://swap-aster.github.io/#webpage"},"about":{"@id":"https://swap-aster.github.io/#app"},"name":"Aster Swap FAQ","mainEntity":[{"@type":"Question","name":"What is Aster Swap?","acceptedAnswer":{"@type":"Answer","text":"It is a non-custodial interface for swapping tokens on Aster, an on-chain exchange on BNB Chain. You connect your own wallet, review a quote and sign each transaction yourself."}},{"@type":"Question","name":"What is Aster?","acceptedAnswer":{"@type":"Answer","text":"Aster is a non-custodial on-chain exchange on BNB Chain that offers spot trading and perpetual futures. It has its own token, ASTER."}},{"@type":"Question","name":"What is the ASTER token?","acceptedAnswer":{"@type":"Answer","text":"ASTER is the native token of the Aster exchange. As with any token, check its contract address before you trade and do not assume its price will hold."}},{"@type":"Question","name":"Does this page support perpetuals?","acceptedAnswer":{"@type":"Answer","text":"This page is built around swaps. Perpetuals add leverage, funding payments and liquidation, so they carry much higher risk and need separate care."}},{"@type":"Question","name":"Which token pays gas?","acceptedAnswer":{"@type":"Answer","text":"BNB pays gas for every transaction on BNB Chain, including approvals and swaps. Keep a small BNB balance in the same wallet."}},{"@type":"Question","name":"Do I need to approve a token first?","acceptedAnswer":{"@type":"Answer","text":"Yes for BEP-20 tokens, because the router needs a one-time allowance to move them. The approval is a separate transaction with its own small fee. Native BNB needs no approval."}}]}]}
+</script>
+<style>
+@font-face{font-family:'Inter';src:url('assets/inter.woff2') format('woff2');font-weight:400 700;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url('assets/space-grotesk.woff2') format('woff2');font-weight:500 700;font-display:swap}
+:root{
+ --bg:#f6f5f4;--card:#fff;--ink:#17181c;--muted:#737b88;--faint:#aeb4bf;
+ --line:#ecebe9;--line-2:#e3e1de;--panel:#f8f7f6;--panel-2:#efedeb;
+ --accent:#7c3aed;--accent-hover:#6d33d1;--accent-ink:#5d2cb2;--accent-soft:#ede3fc;--accent-on:#ffffff;--promo:#f2ebfd;--text-2:#4b5563;
+ --shadow:0 1px 2px rgba(13,17,28,.04),0 24px 56px -40px rgba(13,17,28,.24);--pico-bg:#fff;--pico-ring:rgba(13,17,28,.06);
+ --ease:cubic-bezier(.2,.7,.2,1);
+ --head:"Space Grotesk","Arial",sans-serif;--body:"Inter","Arial",sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--ink);font:15px/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;background:var(--bg)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:none;-webkit-mask-image:linear-gradient(#000 0,rgba(0,0,0,.35) 60%,transparent 100%);mask-image:linear-gradient(#000 0,rgba(0,0,0,.35) 60%,transparent 100%)}
+a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;background:none;border:0;color:inherit}
+img{display:block;max-width:100%}
+h1,h2,h3{margin:0;font-family:var(--head);font-weight:500;letter-spacing:-.01em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+.nav{display:flex;align-items:center;gap:24px;padding:16px 24px;max-width:1280px;margin:0 auto;width:100%}
+.brand{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:500;font-size:20px;letter-spacing:-.02em;color:var(--ink);white-space:nowrap;flex:0 0 auto}
+.brand img{width:28px;height:28px}
+.nlinks{display:flex;align-items:center;gap:20px}
+.nlinks a{font-size:14px;font-weight:500;color:var(--muted);white-space:nowrap;transition:color .16s var(--ease)}
+.nlinks a:hover{color:var(--ink)}
+.spacer{flex:1}
+main{flex:1}
+.chain{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;background:var(--panel-2);font-weight:500;font-size:14px;color:var(--ink);transition:background-color .16s var(--ease);flex:0 0 auto;white-space:nowrap}
+.chain img{width:20px;height:20px;border-radius:50%}
+.chain:hover{background:var(--line-2)}
+.chain .cv{width:12px;height:12px;color:var(--muted)}
+.connect{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:var(--card);border:1px solid var(--line-2);color:var(--ink);font-weight:500;font-size:14px;transition:background-color .16s var(--ease),border-color .16s var(--ease);flex:0 0 auto;white-space:nowrap}
+.connect:hover{border-color:var(--faint);background:var(--panel)}
+
+.hero{display:flex;flex-direction:column;align-items:center;padding:32px 20px 48px}
+h1{font-size:clamp(36px,4.6vw,48px);line-height:1.08;letter-spacing:-.025em;text-align:center;color:var(--ink);margin:0 0 32px}
+
+.card{width:min(600px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
+.tabs{display:flex;align-items:center;gap:4px;padding:20px 20px 16px}
+.tab{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:10px;font-weight:500;font-size:14px;color:var(--muted);transition:background-color .16s var(--ease),color .16s var(--ease)}
+.tab:hover{background:var(--panel-2);color:var(--ink)}
+.tab.on{background:var(--accent-soft);color:var(--accent-ink)}
+.tabs .sp{flex:1}
+.tabs .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--muted);transition:background-color .16s var(--ease),color .16s var(--ease)}
+.tabs .ic:hover{background:var(--panel-2);color:var(--ink)}
+.tabs .ic svg{width:18px;height:18px}
+
+.promo{margin:0 20px;padding:32px;border-radius:12px;background:var(--promo);display:flex;align-items:center;gap:20px}
+.promo-txt{flex:1;min-width:0}
+.promo-h{font-family:var(--head);font-weight:500;font-size:clamp(22px,3.4vw,28px);line-height:1.2;letter-spacing:-.015em;color:var(--ink);margin:0 0 8px;text-wrap:balance}
+.promo-sub{font-size:15px;line-height:1.6;color:var(--text-2);margin:0;max-width:34ch}
+.promo-grid{flex:0 0 auto;display:grid;grid-template-columns:repeat(2,auto);gap:16px}
+.pico{width:52px;height:52px;border-radius:50%;background:var(--pico-bg);box-shadow:0 0 0 1px var(--pico-ring);display:grid;place-items:center;overflow:hidden}
+.pico img{width:100%;height:100%;object-fit:contain;display:block}
+.promo-flow{flex-direction:column;align-items:stretch;gap:24px}
+.promo-flow .promo-sub{max-width:44ch}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.flow li{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.flow li+li::before{content:"";position:absolute;top:22px;right:calc(50% + 30px);width:calc(100% - 52px);height:1px;background:var(--line-2)}
+.fi{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:var(--pico-bg);box-shadow:0 0 0 1px var(--pico-ring);color:var(--accent-ink)}
+.fi img{width:100%;height:100%;display:block}
+.fi svg{width:20px;height:20px}
+.fi.on{background:var(--accent);color:var(--accent-on);box-shadow:none}
+.flow b{margin-top:4px;font-weight:500;font-size:14px;color:var(--ink)}
+.flow small{font-size:13px;line-height:1.4;color:var(--muted)}
+.cta-wrap{padding:20px}
+.cta{width:100%;height:60px;border-radius:12px;background:var(--accent);color:var(--accent-on);font-weight:500;font-size:16px;transition:background-color .16s var(--ease),transform .12s var(--ease)}
+.cta:hover{background:var(--accent-hover)}
+.cta:active{transform:scale(.99)}
+@media(max-width:470px){.promo{flex-direction:column;align-items:flex-start}.promo-grid{grid-template-columns:repeat(4,auto)}.promo-sub{max-width:none}}
+
+.learn{max-width:720px;margin:48px auto 0;width:100%;padding:0 24px 72px}
+.learn-h{font-size:14px;font-weight:500;color:var(--muted);text-align:center;margin:0 0 12px}
+.lrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:flex-start}
+.lcard{flex:0 0 auto;background:transparent;border:1px solid var(--line-2);border-radius:10px;transition:background-color .16s var(--ease),border-color .16s var(--ease)}
+.lcard>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;font-weight:500;font-size:14px;color:var(--text-2)}
+.lcard>summary::-webkit-details-marker{display:none}
+.lcard:hover{border-color:var(--faint);background:var(--card)}.lcard:hover>summary{color:var(--ink)}
+.lcard .chev{width:6px;height:6px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin-top:-4px;flex-shrink:0;transition:transform .16s var(--ease)}
+.lcard[open]{order:9;flex:0 0 100%;min-width:0;background:var(--card);border-color:var(--line-2);border-radius:16px;margin-top:8px}
+.lcard[open]>summary{height:auto;padding:20px 24px 0;color:var(--muted);font-size:13px}
+.lcard[open] .chev{transform:rotate(225deg);margin-top:4px}
+.lbody{padding:4px 24px 24px;max-width:660px}
+.lbody h2{font-size:22px;line-height:1.3;color:var(--ink);margin:8px 0 4px}
+.lbody h3{font-size:15px;line-height:1.4;color:var(--ink);margin:20px 0 4px}
+.lbody p{margin:0;font-size:15px;line-height:1.7;color:var(--text-2)}
+.lbody p+p{margin-top:8px}
+.lbody ul,.lbody ol{margin:8px 0 0;padding-left:20px}
+.lbody li{font-size:15px;line-height:1.7;color:var(--text-2);margin-bottom:4px}
+.lbody a{color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px}
+.lbody strong,.lbody b{color:var(--ink);font-weight:500}
+.lbody .tbl{overflow-x:auto;margin:16px 0 4px}
+.lbody table{width:100%;min-width:420px;border-collapse:collapse;font-size:14px}
+.lbody caption{text-align:left;color:var(--muted);font-size:13px;margin-bottom:8px}
+.lbody th,.lbody td{text-align:left;padding:8px 12px;border:1px solid var(--line-2);vertical-align:top;line-height:1.45}
+.lbody thead th{background:var(--panel);color:var(--ink);font-weight:500}
+.lbody tbody th{background:var(--panel);color:var(--muted);white-space:nowrap;font-weight:500}
+.lbody td{color:var(--text-2)}
+.lfaq h3{margin-top:16px;font-size:16px}
+
+footer{border-top:1px solid var(--line-2);background:var(--card)}
+.foot{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:20px 24px 24px;color:var(--muted);font-size:13px}
+.foot a{color:var(--muted);transition:color .16s var(--ease)}.foot a:hover{color:var(--ink)}.foot .sep{color:var(--faint)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,8px);background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 16px;font-size:13px;box-shadow:0 16px 40px -16px rgba(13,17,28,.5);z-index:60;opacity:0;visibility:hidden;transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+
+@media(max-width:1120px){.nlinks{display:none}}
+@media(max-width:720px){.chain span{display:none}.chain{padding:0 8px;gap:4px}}
+@media(max-width:560px){
+  .nav{padding:12px 16px;gap:8px}
+  .brand{font-size:16px}
+  .brand img{width:24px;height:24px}
+  .chain{height:36px;padding:0 8px;gap:4px}
+  .chain span{display:none}
+  .connect{height:36px;padding:0 12px;font-size:13px}
+  .hero{padding:24px 16px 40px}
+  .tabs{padding:16px 16px 12px}.promo{margin:0 16px;padding:24px}.cta-wrap{padding:16px}.cta{height:56px}
+  .learn{margin-top:40px;padding:0 16px 56px}
+}
+</style>
+<link rel="prerender" href="/dashboard/">
+<link rel="prefetch" href="/dashboard/" as="document">
+<link rel="preload" href="/dashboard/" as="document">
 </head>
 <body>
-  <a class="c5cab37" href="#content">Skip to content</a>
-  <header class="c64431c">
-    <nav class="cf01d37 cd789b7" aria-label="Primary navigation">
-      <a class="ca6e3f4" href="#top" aria-label="Swap station, top of page">
-        <span class="c055988" aria-hidden="true"><svg class="c7ede64" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></svg></span>
-        Swap station
-      </a>
-      <div class="cb8be88">
-        <a href="#facts">Key facts</a>
-        <a href="#sources">Sources</a>
-        <a class="cedccae" href="dashboard/">Swap</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-cv" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 5 5 5-5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.4 3 8.4 7 10 4-1.6 7-5.6 7-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-coins" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="9" cy="7" rx="5" ry="2.5"/><path d="M4 7v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7"/><path d="M10 15.5c.6 1.2 2.6 2 5 2 2.8 0 5-1.1 5-2.5v-4c0-1.4-2.2-2.5-5-2.5"/><path d="M20 15v4c0 1.4-2.2 2.5-5 2.5s-5-1.1-5-2.5v-2"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><path d="M12 14.5v2"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+<symbol id="i-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5s-6 6.4-6 10.5a6 6 0 0 0 12 0c0-4.1-6-10.5-6-10.5z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01M8 16.5h.01"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.8 7.8 0 0 0 0-2l2-1.5-2-3.4-2.3 1a7.6 7.6 0 0 0-1.7-1L15 2.5h-4l-.4 2.6c-.6.3-1.2.6-1.7 1l-2.3-1-2 3.4L4.6 11a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.4 2.3-1c.5.4 1.1.7 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.3 1 2-3.4z"/></symbol>
+</defs></svg>
+
+<header class="nav">
+  <a class="brand" href="index.html" aria-label="Aster Swap home"><img src="icon.svg" alt=""><span>Aster Swap</span></a>
+  <nav class="nlinks" aria-label="Primary">
+    <a href="#overview">What is Aster</a>
+    <a href="#compare">Spot vs perps</a>
+    <a href="#how">How to swap</a>
+    <a href="#fees">Fees &amp; gas</a>
+    <a href="#security">Security</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <span class="spacer"></span>
+  <a class="chain" href="/dashboard/" style="text-decoration:none"><img src="assets/coin-swap-aster.svg" alt=""><span>BNB Chain</span><svg class="cv" aria-hidden="true"><use href="#i-cv"/></svg></a>
+  <a class="connect" href="/dashboard/" style="text-decoration:none">Connect wallet</a>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Aster Swap</h1>
+
+    <section class="card" aria-label="Aster Swap">
+      <div class="tabs">
+        <button class="tab on" type="button">Swap</button>
+        <button class="tab" type="button">Status</button>
+        <span class="sp"></span>
+        <button class="ic gear" type="button" aria-label="Settings" data-toast="Settings are disabled in this demo."><svg aria-hidden="true"><use href="#i-gear"/></svg></button>
       </div>
-    </nav>
-  </header>
-  <div class="cd789b7" id="top">
-    <div class="ceadd03"><nav class="c26cd1f" aria-label="Breadcrumb"><a href="dashboard/">Home</a> <span>/</span> <span>Swaps</span> <span>/</span> <span>Aster Swap</span></nav></div>
-    <section class="c013f53" aria-labelledby="hero-title">
-      <div class="cd42e99">
-        <p class="ccdf8f2">All swap routes</p>
-        <h1 id="hero-title">Aster <em>Swap</em>.</h1>
-        <p class="c8fa205">An Aster Swap is the action of trading one token for another directly through Aster's spot pools, settled in one on-chain transaction with no order book and no custodian in between.</p>
-        <a class="cedccae" href="dashboard/">Swap <svg class="c7ede64" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+
+      <div class="promo">
+        <div class="promo-txt">
+          <h2 class="promo-h">Swap tokens on Aster, BNB Chain</h2>
+          <p class="promo-sub">Trade spot pairs from your own wallet on BNB Chain. Perpetuals carry extra risk.</p>
+        </div>
+        <div class="promo-grid" aria-hidden="true">
+          <span class="pico"><img src="assets/coin-swap-aster.svg" alt=""></span>
+          <span class="pico"><img src="assets/tether-usdt.svg" alt=""></span>
+          <span class="pico"><img src="assets/usd-coin-usdc.svg" alt=""></span>
+          <span class="pico"><img src="assets/ethereum-eth.svg" alt=""></span>
+        </div>
       </div>
-      <aside class="ca0e2b4 c5c67eb" data-from="ETH" aria-labelledby="widget-title">
-        <div class="c84d803">
-          <h2 id="widget-title">Swap</h2>
-          <span class="cf3ac52">Best route</span>
-        </div>
-        <div class="c360bdf">
-          <div class="ccfadca"><span class="ccf17d1">You pay</span></div>
-          <div class="c173e3b">
-            <input id="pay-amount" class="c452956" type="number" inputmode="decimal" min="0" max="1000000000" step="any" value="1" aria-label="Amount you pay">
-            <span class="c1135d8">
-              <img class="c1d5c38" id="pay-ico" width="22" height="22" alt="" src="assets/tokens/eth.svg">
-              <select id="pay-token" class="cb39ca0" aria-label="Token you pay"></select>
-            </span>
-          </div>
-          <div class="c63905e" id="pay-usd">—</div>
-        </div>
-        <button type="button" class="cee0aa3" id="swap-switch" aria-label="Switch the two tokens">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v13m0 0-3-3m3 3 3-3M17 20V7m0 0-3 3m3-3 3 3"/></svg>
-        </button>
-        <div class="c360bdf">
-          <div class="ccfadca"><span class="ccf17d1">You receive</span></div>
-          <div class="c173e3b">
-            <output id="get-amount" class="c452956" for="pay-amount">—</output>
-            <span class="c1135d8">
-              <img class="c1d5c38" id="get-ico" width="22" height="22" alt="" src="assets/tokens/usdt.svg">
-              <select id="get-token" class="cb39ca0" aria-label="Token you receive"></select>
-            </span>
-          </div>
-          <div class="c63905e" id="get-usd">—</div>
-        </div>
-        <dl class="ccf30c9">
-          <div><dt>Rate</dt><dd id="swap-rate">—</dd></div>
-          <div><dt>Network fee</dt><dd id="swap-fee">0.3%</dd></div>
-        </dl>
-        <noscript><p class="c536031">Enable JavaScript to estimate the swap.</p></noscript>
-        <a class="cedccae" href="dashboard/">Swap <svg class="c7ede64" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
-      </aside>
+
+      <div class="cta-wrap"><a class="cta" href="/dashboard/" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Swap on Aster</a></div>
     </section>
-    <section class="c178f93" id="facts" aria-labelledby="facts-title">
-      <h2 class="c24527b" id="facts-title">Key facts</h2>
-      <div class="c0344b4"><table class="caf9c9a"><tbody><tr><th scope="row">Action</th><td>Single on-chain token-for-token trade</td></tr>
-<tr><th scope="row">Venue</th><td>Aster spot pools, no order book</td></tr>
-<tr><th scope="row">Approval</th><td>One-time per token, before the first swap</td></tr>
-<tr><th scope="row">Quote shown</th><td>Rate, price impact, minimum received</td></tr>
-<tr><th scope="row">Settlement</th><td>Same transaction, next block confirmation</td></tr>
-<tr><th scope="row">Custody</th><td>Self-custody — wallet signs, wallet holds funds</td></tr></tbody></table></div>
-    </section>
-  </div>
-  <main class="c5b6d7a cd789b7" id="content">
-    <section class="c08fe01"><h2 class="c2b9534">What an Aster Swap Is</h2><div class="c52a98a"><strong>An Aster Swap is a single signed transaction that exchanges one token for another through an automated liquidity pool rather than matching against another trader's order.</strong> Instead of a buyer and seller meeting at an agreed price, you trade against a pool that holds both assets, and the pool's own formula sets the rate based on how much of each token it currently holds. This is the same mechanism described in the <a href="https://en.wikipedia.org/wiki/Automated_market_maker" rel="nofollow noopener" target="_blank">automated market maker</a> model that most on-chain exchanges use, and it is why a quote can move slightly between the moment you type an amount and the moment you sign.<h3>Why no order book is involved</h3>A traditional exchange needs a matching buyer and seller at the same price. An Aster Swap skips that requirement entirely: the pool itself is always the counterparty, so a trade executes instantly as long as the pool holds enough liquidity, even at 3am when order-book volume elsewhere would be thin.<h3>What determines the exact rate</h3>The rate you receive comes from the ratio of the two tokens sitting in the pool at the moment your transaction is processed, not a price feed from elsewhere. Larger trades shift that ratio more, which is why the size of your own order affects the price you get on the trade.<h3>One transaction, not two</h3>Selling and buying happen inside the same signed transaction. There is no separate step where you first sell for an intermediate asset — the swap contract handles the exchange and delivers the output token to your address in one pass.</div></section>
-<section class="c08fe01"><h2 class="c2b9534">Connecting a Wallet and Choosing a Pair for an Aster Swap</h2><div class="c52a98a">Before anything else, Aster needs a connected wallet to see your balances and to request your signature later. Once connected, you pick the token you are selling and the token you want to receive — the interface fills in an estimated rate as soon as both sides of the pair are set. If the exact pair you want has thin liquidity, the interface may route the trade through an intermediate token automatically, which simply adds a second internal hop inside the same transaction.</div></section>
-<section class="c08fe01"><h2 class="c2b9534">Token Approval Before an Aster Swap</h2><div class="c52a98a">An ERC-20 token cannot be pulled by any contract, including Aster's swap router, until you grant it permission. That permission is a separate signed message called an approval, and it only has to happen once per token per wallet.<h3>Why approval exists at all</h3>The approval step is a safety feature baked into the ERC-20 standard itself, not something specific to Aster. It stops a contract from moving your tokens without your explicit, visible consent, and you can read exactly what you are granting in your wallet's confirmation screen before you sign.<h3>Limited versus unlimited allowance</h3>Some wallets default to an unlimited allowance so you never approve that token again; others let you set an exact amount for just this trade. A limited allowance means a future exploit in an unrelated contract cannot drain more than what you approved, so it is the more conservative choice for a token you rarely trade.</div></section>
-<section class="c08fe01"><h2 class="c2b9534">Reading the Quote Before You Confirm an Aster Swap</h2><div class="c52a98a">Once both tokens are selected and an amount is entered, Aster shows a live quote: the exchange rate, the estimated price impact, and the minimum amount you will accept after slippage. <strong>Price impact</strong> is how much your own trade moves the pool's ratio — small for a well-funded pair, larger for a thin one — and it is separate from <strong>slippage tolerance</strong>, which is the buffer you allow for the rate shifting between signing and confirmation. Checking both numbers before you sign is the entire difference between a predictable swap and an unpleasant surprise.<table><thead><tr><th>Quote field</th><th>What it tells you</th><th>What to watch for</th></tr></thead><tbody><tr><td>Exchange rate</td><td>Tokens received per token sold, right now</td><td>Compare against an external reference price</td></tr><tr><td>Price impact</td><td>How much your size moves the pool ratio</td><td>High impact signals thin liquidity for that pair</td></tr><tr><td>Minimum received</td><td>Worst-case output after slippage tolerance</td><td>Set tolerance tight for stable pairs, looser for volatile ones</td></tr></tbody></table><h3>When price impact runs high</h3>A large price impact usually means the pool for that pair is shallow relative to your trade size. Splitting the order into smaller pieces, or routing through a deeper pair on a venue tracked by <a href="https://defillama.com/" rel="nofollow noopener" target="_blank">DefiLlama</a>, often gets a better net result than pushing the whole amount through one thin pool.<h3>Setting slippage tolerance correctly</h3>Too tight a tolerance and a normal price tick between signing and confirming can fail your trade outright, wasting the gas you already spent. Too loose, and a sandwich attempt or a stale quote can fill you at a noticeably worse rate — a middle setting appropriate to the pair's usual volatility is the safer default.</div></section>
-<section class="c08fe01"><h2 class="c2b9534">Confirming an Aster Swap: What Happens On-Chain</h2><div class="c52a98a">Signing the confirmation sends your transaction to the network. The swap contract pulls your approved input token, runs the pool's pricing formula, sends the output token to your address, and updates the pool's reserves — all inside the same transaction, the way a standard exchange contract works as documented in <a href="https://docs.uniswap.org/" rel="nofollow noopener" target="_blank">Uniswap's developer docs</a>, which describe the pooled-liquidity model Aster's own pools follow. Nothing is final until the transaction is mined; before that, it sits in the pending pool visible to anyone running a node.</div></section>
-<section class="c08fe01"><h2 class="c2b9534">Step-by-Step Aster Swap Flow</h2><div class="c52a98a">The mechanics stay identical every time you trade, which is what makes the process predictable once you have done it once.<ul><li>Connect your wallet so Aster can read your balances and request a signature.</li><li>Choose the token you're selling and the token you want to receive.</li><li>Approve the input token if this is your first swap with it.</li><li>Review the quoted rate, price impact, and minimum amount received.</li><li>Sign to confirm; the swap contract executes the trade on-chain.</li><li>Check the output token in your wallet once the transaction confirms.</li></ul></div></section>
-<section class="c08fe01"><h2 class="c2b9534">Verifying and Troubleshooting an Aster Swap</h2><div class="c52a98a">Every Aster Swap produces a transaction hash you can look up on a block explorer such as <a href="https://etherscan.io/" rel="nofollow noopener" target="_blank">Etherscan</a> to confirm exactly what moved, what the gas cost was, and that the output token reached your address. If a swap fails, the most common causes are a slippage tolerance too tight for the current rate movement, an insufficient token approval, or not enough native currency in the wallet to cover <a href="https://ethereum.org/en/developers/docs/gas/" rel="nofollow noopener" target="_blank">gas</a>. A failed transaction still consumes gas even though the trade itself did not execute, which is why double-checking the quote before signing is worth the extra few seconds.</div></section><section class="c08fe01 cf572d7" id="related"><h2 class="c2b9534">Related tools</h2><div class="c52a98a"><ul><li><a href="https://llama-swap.github.io/">LlamaSwap</a></li><li><a href="https://swap-xrp.github.io/">XRP Swap</a></li><li><a href="https://paraswap-app.github.io/">ParaSwap guide</a></li><li><a href="https://crypto-swaps.github.io/">Crypto Swaps</a></li><li><a href="https://polygon-swap.github.io/">Polygon Swap</a></li></ul></div></section>
-    <details class="c08fdd3"><summary class="cd853d0">What is an Aster Swap?</summary><div class="cd72ecd">It is a single on-chain transaction that trades one token for another through an automated liquidity pool instead of an order book, settling as soon as the transaction confirms.</div></details>
-<details class="c08fdd3"><summary class="cd853d0">Do I need to approve a token before swapping on Aster?</summary><div class="cd72ecd">Yes, the first time you trade a given ERC-20 token. Approval is a one-time signed permission that lets the swap contract move that token from your wallet; after that it is not needed again for the same token.</div></details>
-<details class="c08fdd3"><summary class="cd853d0">Why does the rate change while I'm setting up a trade?</summary><div class="cd72ecd">The rate on a swap comes from the live ratio of tokens inside the pool, which shifts as other trades happen. That is why the quote can move slightly between typing an amount and signing the confirmation.</div></details>
-<details class="c08fdd3"><summary class="cd853d0">What is price impact in a swap quote?</summary><div class="cd72ecd">Price impact measures how much your own trade size shifts the pool's ratio and, with it, the rate you receive. It is usually small for deep, well-traded pairs and larger for thin ones.</div></details>
-<details class="c08fdd3"><summary class="cd853d0">How is slippage tolerance different from price impact?</summary><div class="cd72ecd">Price impact is caused by your own order size; slippage tolerance is the buffer you set for the rate moving due to other activity between signing and confirmation. Both affect the final amount you receive from the trade.</div></details>
-<details class="c08fdd3"><summary class="cd853d0">Can an Aster Swap fail after I sign it?</summary><div class="cd72ecd">Yes. A transaction can fail if the price moves past your slippage tolerance, if the approval is insufficient, or if the wallet lacks enough native currency for gas. The trade simply fails to go through, though the gas spent on the attempt is still lost.</div></details>
-<details class="c08fdd3"><summary class="cd853d0">Where can I confirm a swap actually went through?</summary><div class="cd72ecd">Every confirmed swap has a transaction hash you can search on a block explorer to see the exact tokens moved, the gas paid, and the final balances in your wallet.</div></details>
-  </main>
-  <section class="c9681f3 cd789b7" id="sources" aria-labelledby="sources-title">
-    <h2 class="c24527b" id="sources-title">Sources</h2>
-    <ul class="c8574fc"><li><a class="c5366e7" href="https://docs.uniswap.org/" rel="nofollow noopener" target="_blank">Uniswap developer documentation</a></li>
-<li><a class="c5366e7" href="https://en.wikipedia.org/wiki/Automated_market_maker" rel="nofollow noopener" target="_blank">Automated market maker — Wikipedia</a></li>
-<li><a class="c5366e7" href="https://ethereum.org/en/developers/docs/gas/" rel="nofollow noopener" target="_blank">Ethereum gas documentation</a></li>
-<li><a class="c5366e7" href="https://defillama.com/" rel="nofollow noopener" target="_blank">DefiLlama</a></li></ul>
   </section>
-  <footer class="ce3f7e8">
-    <div class="cae802e cd789b7">
-      <p>Updated Nov 06, 2026</p>
-      <a href="#top">Back to top ↑</a>
+
+  <section class="learn" id="learn">
+    <p class="learn-h">Learn about Aster and swapping</p>
+    <div class="lrow">
+      <details class="lcard" name="learn" id="overview"><summary><span>What is Aster</span><span class="chev" aria-hidden="true"></span></summary><div class="lbody"><h2>Swapping on Aster</h2><h3>An on-chain exchange on BNB Chain</h3><p>An <strong>Aster swap</strong> is a spot trade on Aster, a non-custodial on-chain exchange on BNB Chain. Aster offers spot trading and perpetual futures, and has its own token, ASTER. You trade from your own wallet instead of depositing funds with a company.</p><h3>Spot and perpetuals are different</h3><p>A spot swap exchanges one token for another and you end up holding the asset you bought. A perpetual is a leveraged contract on a price with funding payments and liquidation, which is a separate risk class. This page is about swaps.</p></div></details>
+
+      <details class="lcard" name="learn" id="compare"><summary><span>Spot vs perps</span><span class="chev" aria-hidden="true"></span></summary><div class="lbody"><h2>Spot swaps compared with perpetuals</h2><p>Both live on the same exchange, but they work differently and carry different risks. Know which one you are using before you sign.</p><div class="tbl"><table><caption>Spot swap vs perpetual contract</caption><thead><tr><th scope="col"></th><th scope="col">Spot swap</th><th scope="col">Perpetual</th></tr></thead><tbody><tr><th scope="row">You receive</th><td>the token itself</td><td>a position on the price</td></tr><tr><th scope="row">Leverage</th><td>none</td><td>optional, raises risk</td></tr><tr><th scope="row">Liquidation</th><td>not applicable</td><td>possible if margin runs low</td></tr><tr><th scope="row">Ongoing cost</th><td>none after the trade</td><td>funding payments</td></tr></tbody></table></div></div></details>
+
+      <details class="lcard" name="learn" id="how"><summary><span>How to swap</span><span class="chev" aria-hidden="true"></span></summary><div class="lbody"><h2>How to swap on Aster</h2><h3>Quote first, sign second</h3><p>The interface shows the expected output, price impact and slippage tolerance before anything is signed. You confirm each transaction in your own wallet.</p><h3>Step by step</h3><ol><li>Connect your wallet and switch it to BNB Chain.</li><li>Select the token to sell and the token to buy, then enter an amount.</li><li>Review the quote, route and estimated network fee in BNB.</li><li>Approve the sell token once if it is a BEP-20 token and this is its first swap from this wallet.</li><li>Sign the swap and wait for confirmation; the bought token arrives in your wallet.</li></ol></div></details>
+
+      <details class="lcard" name="learn" id="fees"><summary><span>Fees &amp; gas</span><span class="chev" aria-hidden="true"></span></summary><div class="lbody"><h2>What swapping on Aster costs</h2><h3>Network fee in BNB</h3><p>Every approval and swap is a BNB Chain transaction paid in BNB. Fees there are generally modest but still vary with network load. See the <a href="https://docs.bnbchain.org/" target="_blank" rel="nofollow noopener">BNB Chain docs</a> for how gas works.</p><h3>Trading cost</h3><p>The quote reflects exchange fees, price impact and any aggregator fee, so the amount shown is what you should expect to receive. Illiquid pairs move the price more on larger orders.</p><h3>Keep some BNB</h3><p>Without BNB in your wallet you cannot sign a swap, even if you hold plenty of other tokens.</p></div></details>
+
+      <details class="lcard" name="learn" id="security"><summary><span>Security</span><span class="chev" aria-hidden="true"></span></summary><div class="lbody"><h2>Staying safe on Aster</h2><h3>Non-custodial by design</h3><p>You connect your own wallet and sign every transaction. This interface routes and quotes; it never holds your funds or keys.</p><h3>Before you sign</h3><ul><li>Verify token contract addresses, including ASTER; fake tokens copy real names.</li><li>Confirm your wallet is on BNB Chain.</li><li>Approve only the amount you need and revoke unused allowances.</li><li>Do not use leverage or perpetuals unless you understand liquidation.</li><li>Smart contracts can contain bugs and exchanges can face outages, so risk is never zero.</li></ul></div></details>
+
+      <details class="lcard" name="learn" id="faq"><summary><span>FAQ</span><span class="chev" aria-hidden="true"></span></summary><div class="lbody lfaq"><h2>Aster Swap FAQ</h2>
+<h3>What is Aster Swap?</h3>
+<p>It is a non-custodial interface for swapping tokens on Aster, an on-chain exchange on BNB Chain. You connect your own wallet, review a quote and sign each transaction yourself.</p>
+<h3>What is Aster?</h3>
+<p>Aster is a non-custodial on-chain exchange on BNB Chain that offers spot trading and perpetual futures. It has its own token, ASTER.</p>
+<h3>What is the ASTER token?</h3>
+<p>ASTER is the native token of the Aster exchange. As with any token, check its contract address before you trade and do not assume its price will hold.</p>
+<h3>Does this page support perpetuals?</h3>
+<p>This page is built around swaps. Perpetuals add leverage, funding payments and liquidation, so they carry much higher risk and need separate care.</p>
+<h3>Which token pays gas?</h3>
+<p>BNB pays gas for every transaction on BNB Chain, including approvals and swaps. Keep a small BNB balance in the same wallet.</p>
+<h3>Do I need to approve a token first?</h3>
+<p>Yes for BEP-20 tokens, because the router needs a one-time allowance to move them. The approval is a separate transaction with its own small fee. Native BNB needs no approval.</p></div></details>
     </div>
-  </footer>
-  <script>
-    (() => {
-      const TOKENS = [
-        { s: 'ETH', f: 'eth', p: 2550 }, { s: 'BTC', f: 'btc', p: 62000 },
-        { s: 'USDT', f: 'usdt', p: 1 }, { s: 'USDC', f: 'usdc', p: 1 },
-        { s: 'BNB', f: 'bnb', p: 585 }, { s: 'SOL', f: 'sol', p: 145 },
-        { s: 'ARB', f: 'arb', p: 0.62 }, { s: 'OP', f: 'optimism', p: 1.65 },
-        { s: 'MATIC', f: 'polygon', p: 0.42 }, { s: 'AVAX', f: 'avalanche', p: 27 },
-        { s: 'SUI', f: 'sui', p: 1.35 }, { s: 'LTC', f: 'ltc', p: 72 },
-        { s: 'TRX', f: 'trx', p: 0.16 }, { s: 'XMR', f: 'xmr', p: 155 },
-        { s: 'XRP', f: 'xrp', p: 0.52 }, { s: 'ZEC', f: 'zec', p: 32 }
-      ];
-      const FEE = 0.003;
-      const $ = (id) => document.getElementById(id);
-      const payAmt = $('pay-amount'), payTok = $('pay-token'), payUsd = $('pay-usd'), payIco = $('pay-ico');
-      const getAmt = $('get-amount'), getTok = $('get-token'), getUsd = $('get-usd'), getIco = $('get-ico');
-      const rateEl = $('swap-rate');
-      const tok = (s) => TOKENS.find((t) => t.s === s);
-      const num = (n) => new Intl.NumberFormat('en', { maximumFractionDigits: n >= 1 ? 4 : 6 }).format(n);
-      const usd = (v) => '~$' + new Intl.NumberFormat('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
-      TOKENS.forEach((t) => {
-        [payTok, getTok].forEach((sel) => { const o = document.createElement('option'); o.value = t.s; o.textContent = t.s; sel.appendChild(o); });
-      });
-      const widget = document.querySelector('.c5c67eb');
-      const defFrom = (widget && widget.dataset.from) || 'ETH';
-      const fromOk = TOKENS.some((t) => t.s === defFrom) ? defFrom : 'ETH';
-      payTok.value = fromOk;
-      getTok.value = (fromOk === 'USDT') ? 'ETH' : 'USDT';
-      const calc = () => {
-        const pf = tok(payTok.value), gt = tok(getTok.value);
-        payIco.src = 'assets/tokens/' + pf.f + '.svg'; payIco.alt = pf.s;
-        getIco.src = 'assets/tokens/' + gt.f + '.svg'; getIco.alt = gt.s;
-        rateEl.textContent = '1 ' + pf.s + ' ≈ ' + num(pf.p / gt.p) + ' ' + gt.s;
-        const a = parseFloat(payAmt.value);
-        if (!Number.isFinite(a) || a <= 0) { getAmt.textContent = '—'; payUsd.textContent = '—'; getUsd.textContent = '—'; return; }
-        const out = a * (pf.p / gt.p) * (1 - FEE);
-        getAmt.textContent = num(out) + ' ' + gt.s;
-        payUsd.textContent = usd(a * pf.p);
-        getUsd.textContent = usd(out * gt.p);
-      };
-      const distinct = (changed, other) => { if (changed.value === other.value) { other.value = (TOKENS.find((t) => t.s !== changed.value) || TOKENS[0]).s; } };
-      payAmt.addEventListener('input', calc);
-      payTok.addEventListener('change', () => { distinct(payTok, getTok); calc(); });
-      getTok.addEventListener('change', () => { distinct(getTok, payTok); calc(); });
-      $('swap-switch').addEventListener('click', () => { const t = payTok.value; payTok.value = getTok.value; getTok.value = t; calc(); });
-      calc();
-    })();
-  </script>
-</body>
-</html>
+  </section>
+</main>
+
+<footer>
+  <div class="foot"><span>&copy; 2026 Aster Swap</span><span class="sep">&middot;</span><a href="legal.html#privacy">Privacy</a><span class="sep">&middot;</span><a href="legal.html#terms">Terms</a><span class="sep">&middot;</span><span>Non-custodial &middot; BNB Chain</span></div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+var tabs=[].slice.call(document.querySelectorAll('.tab'));
+tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.classList.toggle('on',x===t);});});});
+
+var toast=document.getElementById('toast'),tT;
+function notify(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove('show');},3000);}
+[].slice.call(document.querySelectorAll('[data-toast]')).forEach(function(b){b.addEventListener('click',function(){notify(b.getAttribute('data-toast'));});});
+
+function openHash(){var id=location.hash.slice(1);if(!id)return;var c=document.getElementById(id);if(c&&c.matches&&c.matches('.lcard[name="learn"]'))c.open=true;}
+window.addEventListener('hashchange',openHash);openHash();
+[].slice.call(document.querySelectorAll('.nlinks a')).forEach(function(a){a.addEventListener('click',function(){var c=document.getElementById(a.getAttribute('href').slice(1));if(c&&c.matches('.lcard'))c.open=true;});});
+})();
+</script>
+</body></html>
